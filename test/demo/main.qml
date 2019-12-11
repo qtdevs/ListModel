@@ -60,7 +60,7 @@ Window {
         model: core.nodes
         delegate: Item {
             width: listView.width
-            height: 40
+            height: 60
 
             Rectangle {
                 anchors {
@@ -96,7 +96,9 @@ Window {
                 Button {
                     text: "Move up"
                     onClicked: {
-                        core.move(index, index - 1);
+                        if (index - 1 >= 0) {
+                            core.move(index, index - 1);
+                        }
                     }
                 }
             }

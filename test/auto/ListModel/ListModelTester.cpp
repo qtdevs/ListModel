@@ -71,10 +71,10 @@ void ListModelTester::onDataChanged(const QModelIndex &tl, const QModelIndex &br
 {
     Q_D(ListModelTester);
 
+    Q_UNUSED(roles);
+
     Q_ASSERT(tl.column() == 0);
     Q_ASSERT(br.column() == 0);
-    Q_ASSERT(roles.count() == 1);
-    Q_ASSERT(roles.at(0) == Internal::QCxxListModel::ModelDataRole);
 
     d->changedList.append(ListModelChanged(tl.row(), br.row()));
 }

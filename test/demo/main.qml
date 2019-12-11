@@ -16,6 +16,41 @@ Window {
         id: core
     }
 
+    Repeater {
+        anchors {
+            centerIn: parent
+        }
+
+        model: core.points
+        delegate: Rectangle {
+            x: 200 + modelData.x
+            y: 200 + modelData.y
+
+            width: 100
+            height: 100
+            color: "red"
+
+            opacity: 0.5
+
+            Behavior on x {
+                NumberAnimation {
+                    duration: 750
+                    easing {
+                        type: Easing.OutCubic
+                    }
+                }
+            }
+            Behavior on y {
+                NumberAnimation {
+                    duration: 750
+                    easing {
+                        type: Easing.OutCubic
+                    }
+                }
+            }
+        }
+    }
+
     ListView {
         id: listView
         anchors {

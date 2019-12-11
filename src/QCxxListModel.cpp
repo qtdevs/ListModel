@@ -18,7 +18,14 @@ QCxxListModel::~QCxxListModel()
 
 QHash<int, QByteArray> QCxxListModel::roleNames() const
 {
-    return QCxxListModelPrivate::roleNames;
+#ifdef Q_COMPILER_INITIALIZER_LISTS
+    QHash<int, QByteArray> roleNames { { QCxxListModel::ModelDataRole, "modelData" } };
+#else
+    QHash<int, QByteArray> roleNames;
+    roleNames[QCxxListModel::ModelDataRole] = "modelData";
+#endif // Q_COMPILER_INITIALIZER_LISTS
+
+    return roleNames;
 }
 
 void QCxxListModel::_q_resetCount()
@@ -54,48 +61,13 @@ void QCxxListModel::setCountEnabled(bool y)
     }
 }
 
-void QCxxListModel::_q_sync(const QModelIndex &tl, const QModelIndex &br)
-{
-    emit dataChanged(tl, br, QCxxListModelPrivate::modelDataRole);
-}
-
 // class QCxxListModelPrivate
-
-QMutex QCxxListModelPrivate::internalGuard;
-
-#ifdef Q_COMPILER_INITIALIZER_LISTS
-
-QVector<int> QCxxListModelPrivate::modelDataRole {
-    QCxxListModel::ModelDataRole
-};
-
-QHash<int, QByteArray> QCxxListModelPrivate::roleNames {
-    { QCxxListModel::ModelDataRole, "modelData" }
-};
-
-#endif // Q_COMPILER_INITIALIZER_LISTS
 
 QCxxListModelPrivate::QCxxListModelPrivate()
     : q_ptr(nullptr)
     , countEnabled(false)
     , count(-1)
 {
-#ifndef Q_COMPILER_INITIALIZER_LISTS
-
-    if (modelDataRole.isEmpty()
-            || roleNames.isEmpty()) {
-        QMutexLocker locker(&internalGuard);
-
-        if (modelDataRole.isEmpty()) {
-            modelDataRole.append(QCxxListModel::ModelDataRole);
-        }
-
-        if (roleNames.isEmpty()) {
-            roleNames.insert(QCxxListModel::ModelDataRole, "modelData");
-        }
-    }
-
-#endif // Q_COMPILER_INITIALIZER_LISTS
 }
 
 QCxxListModelPrivate::~QCxxListModelPrivate()

@@ -16,7 +16,8 @@ protected:
     DemoCore *q_ptr;
 
 protected:
-    QCxxListModel<DemoNode> nodes;
+    QCxxListModel<DemoNode *> nodes;
+    QCxxListModel<QPointF> points;
 };
 
 #endif // DEMOCORE_P_H

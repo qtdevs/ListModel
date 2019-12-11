@@ -1,6 +1,7 @@
 #ifndef QCXXLISTMODEL_H
 #define QCXXLISTMODEL_H
 
+#include <QPoint>
 #include <QAbstractListModel>
 
 #if defined(QT_TESTLIB_LIB)
@@ -47,22 +48,16 @@ public:
     bool isCountEnabled() const;
 public:
     void setCountEnabled(bool y);
-
-protected:
-    void _q_sync(const QModelIndex &tl, const QModelIndex &br);
 };
 
 } // namespace Internal
 
 template <typename T>
-class QCxxListModel : public Internal::QCxxListModel, public QList<T*>
+class QCxxListModel : public Internal::QCxxListModel, public QList<T>
 {
-    typedef T *V;
-    typedef Internal::QCxxListGuard<T> Guard;
-
 public:
-    QCxxListModel(const QList<V> &l, QObject *parent = nullptr)
-        : Internal::QCxxListModel(parent), QList<V>(l) { }
+    QCxxListModel(const QList<T> &l, QObject *parent = nullptr)
+        : Internal::QCxxListModel(parent), QList<T>(l) { }
     explicit QCxxListModel(QObject *parent = nullptr)
         : Internal::QCxxListModel(parent) { }
 
@@ -72,26 +67,26 @@ public:
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
 
 public:
-    V value(const QModelIndex &index) const;
-    V value(const QModelIndex &index, const V &defaultValue) const;
+    T value(const QModelIndex &index) const;
+    T value(const QModelIndex &index, const T &defaultValue) const;
 
-    V value(int i) const;
-    V value(int i, const V &defaultValue) const;
+    T value(int i) const;
+    T value(int i, const T &defaultValue) const;
 
 public:
-    void append(const QList<V> &l);
+    void append(const QList<T> &l);
 
-    void prepend(const V &v);
-    void append(const V &v);
+    void prepend(const T &t);
+    void append(const T &t);
 
-    void push_front(const V &v);
-    void push_back(const V &v);
+    void push_front(const T &t);
+    void push_back(const T &t);
 
-    void replace(int i, const V &v);
-    void insert(int i, const V &v);
+    void replace(int i, const T &t);
+    void insert(int i, const T &t);
 
-    bool removeOne(const V &v);
-    int removeAll(const V &v);
+    bool removeOne(const T &t);
+    int removeAll(const T &t);
 
     void pop_front();
     void pop_back();
@@ -100,12 +95,12 @@ public:
     void removeFirst();
     void removeLast();
 
-    V takeAt(int i);
-    V takeFirst();
-    V takeLast();
+    T takeAt(int i);
+    T takeFirst();
+    T takeLast();
 
     void swap(int i, int j);
-    void swap(QList<V> &list);
+    void swap(QList<T> &list);
     void move(int from, int to);
 
     void clear();
@@ -114,8 +109,8 @@ public: // Extra methods
     void deleteAll();
 
 public: // Disabled stl methods
-    typedef typename QList<V>::iterator         Iterator;
-    typedef typename QList<V>::reverse_iterator ReverseIterator;
+    typedef typename QList<T>::iterator         Iterator;
+    typedef typename QList<T>::reverse_iterator ReverseIterator;
 
     Iterator begin(); // Not Implemented
     Iterator end(); // Not Implemented
@@ -123,38 +118,38 @@ public: // Disabled stl methods
     ReverseIterator rbegin(); // Not Implemented
     ReverseIterator rend(); // Not Implemented
 
-    Iterator insert(Iterator before, const V &t); // Not Implemented
+    Iterator insert(Iterator before, const T &t); // Not Implemented
     Iterator erase(Iterator pos); // No Implemented
     Iterator erase(Iterator begin, Iterator end); // Not Implemented
 
 public:
-    QCxxListModel<T> &operator=(const QList<V> &l);
-    inline QList<V> operator+(const QList<V> &others) const
-    { QList<V> l = *this; l.append(others); return l; }
+    QCxxListModel<T> &operator=(const QList<T> &l);
+    inline QList<T> operator+(const QList<T> &others) const
+    { QList<T> l = *this; l.append(others); return l; }
 
-    inline bool operator==(const QList<V> &other) const
-    { return QList<V>::operator==(other); }
-    inline bool operator!=(const QList<V> &other) const
-    { return QList<V>::operator!=(other); }
+    inline bool operator==(const QList<T> &other) const
+    { return QList<T>::operator==(other); }
+    inline bool operator!=(const QList<T> &other) const
+    { return QList<T>::operator!=(other); }
 
-    inline QCxxListModel<T> &operator+=(const QList<V> &l)
+    inline QCxxListModel<T> &operator+=(const QList<T> &l)
     { append(l); return *this; }
-    inline QCxxListModel<T> &operator<<(const QList<V> &l)
+    inline QCxxListModel<T> &operator<<(const QList<T> &l)
     { append(l); return *this; }
 
-    inline QCxxListModel<T> &operator+=(const V &o)
-    { append(o); return *this; }
-    inline QCxxListModel<T> &operator<<(const V &o)
-    { append(o); return *this; }
+    inline QCxxListModel<T> &operator+=(const T &t)
+    { append(t); return *this; }
+    inline QCxxListModel<T> &operator<<(const T &t)
+    { append(t); return *this; }
 
 public:
-    inline const QList<V> &ref() const { return *this; }
+    inline const QList<T> &ref() const { return *this; }
 };
 
 template <typename T>
 int QCxxListModel<T>::rowCount(const QModelIndex &parent) const
 {
-    return parent.isValid() ? 0 : QList<V>::count();
+    return parent.isValid() ? 0 : QList<T>::count();
 }
 
 template <typename T>
@@ -163,11 +158,11 @@ QVariant QCxxListModel<T>::data(const QModelIndex &index, int role) const
     if ((ModelDataRole != role)
             || !index.isValid()
             || (index.model() != this)
-            || (index.row() >= QList<V>::count())) {
+            || (index.row() >= QList<T>::count())) {
         return QVariant();
     }
 
-    return QVariant::fromValue(QList<V>::at(index.row()));
+    return QVariant::fromValue(QList<T>::at(index.row()));
 }
 
 template<typename T>
@@ -175,130 +170,130 @@ QModelIndex QCxxListModel<T>::index(int row, int column, const QModelIndex &pare
 {
     if ((row < 0)
             || (column != 0)
-            || (row >= QList<V>::count())
+            || (row >= QList<T>::count())
             || parent.isValid()) {
         return QModelIndex();
     }
 
-    return createIndex(row, 0, QList<V>::at(row));
+    return createIndex(row, 0);
 }
 
 template<typename T>
-typename QCxxListModel<T>::V QCxxListModel<T>::value(const QModelIndex &index) const
+T QCxxListModel<T>::value(const QModelIndex &index) const
 {
     QCXXLISTMODEL_ASSERT(index.model() == this);
 
-    return QList<V>::value(index.row());
+    return QList<T>::value(index.row());
 }
 
 template<typename T>
-typename QCxxListModel<T>::V QCxxListModel<T>::value(const QModelIndex &index, const V &defaultValue) const
+T QCxxListModel<T>::value(const QModelIndex &index, const T &defaultValue) const
 {
     QCXXLISTMODEL_ASSERT(index.model() == this);
 
-    return QList<V>::value(index.row(), defaultValue);
+    return QList<T>::value(index.row(), defaultValue);
 }
 
 template<typename T>
-typename QCxxListModel<T>::V QCxxListModel<T>::value(int i) const
+T QCxxListModel<T>::value(int i) const
 {
-    return QList<V>::value(i);
+    return QList<T>::value(i);
 }
 
 template<typename T>
-typename QCxxListModel<T>::V QCxxListModel<T>::value(int i, const V &defaultValue) const
+T QCxxListModel<T>::value(int i, const T &defaultValue) const
 {
-    return QList<V>::value(i, defaultValue);
+    return QList<T>::value(i, defaultValue);
 }
 
 template <typename T>
-void QCxxListModel<T>::append(const QList<V> &l)
+void QCxxListModel<T>::append(const QList<T> &l)
 {
     if (l.isEmpty())
         return;
 
-    int f = QList<V>::count();
+    int f = QList<T>::count();
     int t = f + l.count() - 1;
     beginInsertRows(QModelIndex(), f, t);
-    QList<V>::append(l);
+    QList<T>::append(l);
     endInsertRows();
     _q_resetCount();
 }
 
 template <typename T>
-void QCxxListModel<T>::prepend(const V &v)
+void QCxxListModel<T>::prepend(const T &t)
 {
     beginInsertRows(QModelIndex(), 0, 0);
-    QList<V>::prepend(v);
+    QList<T>::prepend(t);
     endInsertRows();
     _q_resetCount();
 }
 
 template <typename T>
-void QCxxListModel<T>::append(const V &v)
+void QCxxListModel<T>::append(const T &t)
 {
-    int r = QList<V>::count();
+    int r = QList<T>::count();
     beginInsertRows(QModelIndex(), r, r);
-    QList<V>::append(v);
+    QList<T>::append(t);
     endInsertRows();
     _q_resetCount();
 }
 
 template <typename T>
-void QCxxListModel<T>::push_front(const V &v)
+void QCxxListModel<T>::push_front(const T &t)
 {
     beginInsertRows(QModelIndex(), 0, 0);
-    QList<V>::push_front(v);
+    QList<T>::push_front(t);
     endInsertRows();
     _q_resetCount();
 }
 
 template <typename T>
-void QCxxListModel<T>::push_back(const V &v)
+void QCxxListModel<T>::push_back(const T &t)
 {
-    int r = QList<V>::count();
+    int r = QList<T>::count();
     beginInsertRows(QModelIndex(), r, r);
-    QList<V>::push_back(v);
+    QList<T>::push_back(t);
     endInsertRows();
     _q_resetCount();
 }
 
 template <typename T>
-void QCxxListModel<T>::replace(int i, const V &v)
+void QCxxListModel<T>::replace(int i, const T &t)
 {
     QCXXLISTMODEL_ASSERT(i >= 0);
-    QCXXLISTMODEL_ASSERT(i < QList<V>::count());
+    QCXXLISTMODEL_ASSERT(i < QList<T>::count());
 
     QModelIndex x = index(i, 0);
     if (!x.isValid()) {
         return;
     }
 
-    QList<V>::replace(i, v); _q_sync(x, x);
+    QList<T>::replace(i, t); emit dataChanged(x, x);
 }
 
 template <typename T>
-void QCxxListModel<T>::insert(int i, const V &v)
+void QCxxListModel<T>::insert(int i, const T &t)
 {
     QCXXLISTMODEL_ASSERT(i >= 0);
-    QCXXLISTMODEL_ASSERT(i <= QList<V>::count());
+    QCXXLISTMODEL_ASSERT(i <= QList<T>::count());
 
     beginInsertRows(QModelIndex(), i, i);
-    QList<V>::insert(i, v);
+    QList<T>::insert(i, t);
     endInsertRows();
     _q_resetCount();
 }
 
 template <typename T>
-bool QCxxListModel<T>::removeOne(const V &v)
+bool QCxxListModel<T>::removeOne(const T &t)
 {
-    typename QList<V>::iterator p = QList<V>::begin();
-    typename QList<V>::iterator end = QList<V>::end();
+    typename QList<T>::iterator p = QList<T>::begin();
+    typename QList<T>::iterator end = QList<T>::end();
 
     for (int i = 0; p != end; ++p, ++i) {
-        if (*p == v) {
+        if (*p == t) {
             beginRemoveRows(QModelIndex(), i, i);
-            QList<V>::erase(p);
+            QList<T>::erase(p);
             endRemoveRows();
             _q_resetCount();
 
@@ -310,20 +305,20 @@ bool QCxxListModel<T>::removeOne(const V &v)
 }
 
 template <typename T>
-int QCxxListModel<T>::removeAll(const V &v)
+int QCxxListModel<T>::removeAll(const T &t)
 {
-    typename QList<V>::iterator null;
-    typename QList<V>::iterator f = null;
-    typename QList<V>::iterator l = null;
-    typename QList<V>::iterator p = QList<V>::begin();
-    typename QList<V>::iterator end = QList<V>::end();
+    typename QList<T>::iterator null;
+    typename QList<T>::iterator f = null;
+    typename QList<T>::iterator l = null;
+    typename QList<T>::iterator p = QList<T>::begin();
+    typename QList<T>::iterator end = QList<T>::end();
 
     int c = 0;
     int fpos = 0;
     int lpos = 0;
 
     for (int i = 0; p != end; ++p, ++i) {
-        if (v == *p) {
+        if (t == *p) {
             if (f == null) {
                 fpos = i;
                 f = p;
@@ -333,7 +328,7 @@ int QCxxListModel<T>::removeAll(const V &v)
 
         } else if (f != null) {
             beginRemoveRows(QModelIndex(), fpos - c, lpos - c);
-            QList<V>::erase(f, ++l);
+            QList<T>::erase(f, ++l);
             endRemoveRows();
 
             c += lpos - fpos + 1;
@@ -345,7 +340,7 @@ int QCxxListModel<T>::removeAll(const V &v)
 
     if (f != null) {
         beginRemoveRows(QModelIndex(), fpos - c, lpos - c);
-        QList<V>::erase(f, ++l);
+        QList<T>::erase(f, ++l);
         endRemoveRows();
 
         c += lpos - fpos + 1;
@@ -359,10 +354,10 @@ int QCxxListModel<T>::removeAll(const V &v)
 template <typename T>
 void QCxxListModel<T>::pop_front()
 {
-    QCXXLISTMODEL_ASSERT(QList<V>::count() > 0);
+    QCXXLISTMODEL_ASSERT(QList<T>::count() > 0);
 
     beginRemoveRows(QModelIndex(), 0, 0);
-    QList<V>::pop_front();
+    QList<T>::pop_front();
     endRemoveRows();
     _q_resetCount();
 }
@@ -370,11 +365,11 @@ void QCxxListModel<T>::pop_front()
 template <typename T>
 void QCxxListModel<T>::pop_back()
 {
-    QCXXLISTMODEL_ASSERT(QList<V>::count() > 0);
+    QCXXLISTMODEL_ASSERT(QList<T>::count() > 0);
 
-    int r = QList<V>::count() - 1;
+    int r = QList<T>::count() - 1;
     beginRemoveRows(QModelIndex(), r, r);
-    QList<V>::pop_back();
+    QList<T>::pop_back();
     endRemoveRows();
     _q_resetCount();
 }
@@ -383,10 +378,10 @@ template <typename T>
 void QCxxListModel<T>::removeAt(int i)
 {
     QCXXLISTMODEL_ASSERT(i >= 0);
-    QCXXLISTMODEL_ASSERT(i < QList<V>::count());
+    QCXXLISTMODEL_ASSERT(i < QList<T>::count());
 
     beginRemoveRows(QModelIndex(), i, i);
-    QList<V>::removeAt(i);
+    QList<T>::removeAt(i);
     endRemoveRows();
     _q_resetCount();
 }
@@ -394,10 +389,10 @@ void QCxxListModel<T>::removeAt(int i)
 template <typename T>
 void QCxxListModel<T>::removeFirst()
 {
-    QCXXLISTMODEL_ASSERT(QList<V>::count() > 0);
+    QCXXLISTMODEL_ASSERT(QList<T>::count() > 0);
 
     beginRemoveRows(QModelIndex(), 0, 0);
-    QList<V>::removeFirst();
+    QList<T>::removeFirst();
     endRemoveRows();
     _q_resetCount();
 }
@@ -405,54 +400,54 @@ void QCxxListModel<T>::removeFirst()
 template <typename T>
 void QCxxListModel<T>::removeLast()
 {
-    QCXXLISTMODEL_ASSERT(QList<V>::count() > 0);
+    QCXXLISTMODEL_ASSERT(QList<T>::count() > 0);
 
-    int r = QList<V>::count() - 1;
+    int r = QList<T>::count() - 1;
     beginRemoveRows(QModelIndex(), r, r);
-    QList<V>::removeLast();
+    QList<T>::removeLast();
     endRemoveRows();
     _q_resetCount();
 }
 
 template <typename T>
-typename QCxxListModel<T>::V QCxxListModel<T>::takeAt(int i)
+T QCxxListModel<T>::takeAt(int i)
 {
     QCXXLISTMODEL_ASSERT(i >= 0);
-    QCXXLISTMODEL_ASSERT(i < QList<V>::count());
+    QCXXLISTMODEL_ASSERT(i < QList<T>::count());
 
     beginRemoveRows(QModelIndex(), i, i);
-    V v = QList<V>::takeAt(i);
+    T t = QList<T>::takeAt(i);
     endRemoveRows();
     _q_resetCount();
 
-    return v;
+    return t;
 }
 
 template <typename T>
-typename QCxxListModel<T>::V QCxxListModel<T>::takeFirst()
+T QCxxListModel<T>::takeFirst()
 {
-    QCXXLISTMODEL_ASSERT(QList<V>::count() > 0);
+    QCXXLISTMODEL_ASSERT(QList<T>::count() > 0);
 
     beginRemoveRows(QModelIndex(), 0, 0);
-    V v = QList<V>::takeFirst();
+    T t = QList<T>::takeFirst();
     endRemoveRows();
     _q_resetCount();
 
-    return v;
+    return t;
 }
 
 template <typename T>
-typename QCxxListModel<T>::V QCxxListModel<T>::takeLast()
+T QCxxListModel<T>::takeLast()
 {
-    QCXXLISTMODEL_ASSERT(QList<V>::count() > 0);
+    QCXXLISTMODEL_ASSERT(QList<T>::count() > 0);
 
-    int r = QList<V>::count() - 1;
+    int r = QList<T>::count() - 1;
     beginRemoveRows(QModelIndex(), r, r);
-    V v = QList<V>::takeLast();
+    T t = QList<T>::takeLast();
     endRemoveRows();
     _q_resetCount();
 
-    return v;
+    return t;
 }
 
 template <typename T>
@@ -463,19 +458,19 @@ void QCxxListModel<T>::swap(int i, int j)
     }
 
     QCXXLISTMODEL_ASSERT(i >= 0);
-    QCXXLISTMODEL_ASSERT(i < QList<V>::count());
+    QCXXLISTMODEL_ASSERT(i < QList<T>::count());
 
     QCXXLISTMODEL_ASSERT(J >= 0);
-    QCXXLISTMODEL_ASSERT(j < QList<V>::count());
+    QCXXLISTMODEL_ASSERT(j < QList<T>::count());
 
-    QList<V>::swap(i, j);
+    QList<T>::swap(i, j);
 
-    QModelIndex ii = index(i, 0); _q_sync(ii, ii);
-    QModelIndex ji = index(j, 0); _q_sync(ji, ji);
+    QModelIndex ii = index(i, 0); emit dataChanged(ii, ii);
+    QModelIndex ji = index(j, 0); emit dataChanged(ji, ji);
 }
 
 template <typename T>
-void QCxxListModel<T>::swap(QList<V> &l)
+void QCxxListModel<T>::swap(QList<T> &l)
 {
     /*
     if (l.d == this->d) {
@@ -484,7 +479,7 @@ void QCxxListModel<T>::swap(QList<V> &l)
     */
 
     beginResetModel();
-    QList<V>::swap(l);
+    QList<T>::swap(l);
     endResetModel();
     _q_resetCount();
 }
@@ -497,15 +492,15 @@ void QCxxListModel<T>::move(int from, int to)
     }
 
     QCXXLISTMODEL_ASSERT(from >= 0);
-    QCXXLISTMODEL_ASSERT(from < QList<V>::count());
+    QCXXLISTMODEL_ASSERT(from < QList<T>::count());
 
     QCXXLISTMODEL_ASSERT(to >= 0);
-    QCXXLISTMODEL_ASSERT(to < QList<V>::count());
+    QCXXLISTMODEL_ASSERT(to < QList<T>::count());
 
     QModelIndex p;
     int t = (from < to) ? (to + 1) : to;
     if (beginMoveRows(p, from, from, p, t)) {
-        QList<V>::move(from, to);
+        QList<T>::move(from, to);
         endMoveRows();
     }
 }
@@ -518,7 +513,7 @@ void QCxxListModel<T>::clear()
     }
 
     beginResetModel();
-    QList<V>::clear();
+    QList<T>::clear();
     endResetModel();
     _q_resetCount();
 }
@@ -532,13 +527,13 @@ void QCxxListModel<T>::deleteAll()
 
     beginResetModel();
     qDeleteAll(ref());
-    QList<V>::clear();
+    QList<T>::clear();
     endResetModel();
     _q_resetCount();
 }
 
 template<typename T>
-QCxxListModel<T> &QCxxListModel<T>::operator=(const QList<V> &l)
+QCxxListModel<T> &QCxxListModel<T>::operator=(const QList<T> &l)
 {
     /*
     if (l.d == this->d) {
@@ -547,7 +542,7 @@ QCxxListModel<T> &QCxxListModel<T>::operator=(const QList<V> &l)
     */
 
     beginResetModel();
-    QList<V> tmp(l);
+    QList<T> tmp(l);
     tmp.swap(*this);
     endResetModel();
     _q_resetCount();

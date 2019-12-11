@@ -12,6 +12,7 @@ class DemoCore : public QObject
     Q_DECLARE_PRIVATE(DemoCore)
 
     Q_PROPERTY(QAbstractListModel *nodes READ nodes CONSTANT)
+    Q_PROPERTY(QAbstractListModel *points READ points CONSTANT)
 
 public:
     explicit DemoCore(QObject *parent = nullptr);
@@ -21,6 +22,7 @@ protected:
 
 public:
     QAbstractListModel *nodes() const;
+    QAbstractListModel *points() const;
 
 public slots:
     void move(int from, int to);

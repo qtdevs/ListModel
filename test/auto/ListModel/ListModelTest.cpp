@@ -9,7 +9,7 @@
 // Macros
 
 #define InitModel() \
-    QCxxListModel<QObject> model; \
+    QCxxListModel<QObject *> model; \
     model.setCountEnabled(true); \
     auto tester = new ListModelTester(&model)
 

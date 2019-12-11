@@ -18,10 +18,6 @@ protected:
     QCxxListModel *q_ptr;
 
 protected:
-    static QMutex internalGuard;
-    static QVector<int> modelDataRole;
-    static QHash<int, QByteArray> roleNames;
-
     bool countEnabled;
     int  count;
 };

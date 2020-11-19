@@ -6,6 +6,10 @@ CONFIG -= app_bundle
 
 TEMPLATE = app
 
+msvc {
+    QMAKE_CXXFLAGS ~= s/-W3/-W4
+}
+
 HEADERS += \
     ListModelTest.h \
     ListModelTester.h \

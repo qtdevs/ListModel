@@ -460,7 +460,7 @@ void QCxxListModel<T>::swap(int i, int j)
     QCXXLISTMODEL_ASSERT(i >= 0);
     QCXXLISTMODEL_ASSERT(i < QList<T>::count());
 
-    QCXXLISTMODEL_ASSERT(J >= 0);
+    QCXXLISTMODEL_ASSERT(j >= 0);
     QCXXLISTMODEL_ASSERT(j < QList<T>::count());
 
     QList<T>::swap(i, j);
@@ -508,7 +508,7 @@ void QCxxListModel<T>::move(int from, int to)
 template<typename T>
 void QCxxListModel<T>::clear()
 {
-    if (isEmpty()) {
+    if (QList<T>::isEmpty()) {
         return;
     }
 
@@ -521,7 +521,7 @@ void QCxxListModel<T>::clear()
 template<typename T>
 void QCxxListModel<T>::deleteAll()
 {
-    if (isEmpty()) {
+    if (QList<T>::isEmpty()) {
         return;
     }
 
